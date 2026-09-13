@@ -1,0 +1,17 @@
+/.dart_tool/
+/build/
+/release-bundles/
+/upstream-xiaobai/
+/quietstart.hap
+**/.dart_tool/
+**/build/
+**/__pycache__/
+*.hap
+*.p12
+*.p7b
+*.cer
+*.pem
+*.key
+*.keystore
+*.csr
+.DS_Store
