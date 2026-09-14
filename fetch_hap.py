@@ -1,38 +1,14 @@
 #!/usr/bin/env python3
-"""Fetch the pinned public HAP, including after assets are consolidated."""
+"""Fetch the reviewed standalone HAP and verify the pinned digest."""
 from pathlib import Path
 from urllib.request import urlopen
-from urllib.error import HTTPError
 import hashlib
-import io
-import zipfile
-from prepare import HAP_SHA
+from prepare import HAP_SHA, HAP_VERSION
 
-BASE = 'https://github.com/thx853068675-dev/quietstart-installer/releases/download/v0.9.43/'
-LEGACY = 'https://github.com/thx853068675-dev/quietstart/releases/download/v0.9.43/'
-try:
-    with urlopen(BASE + 'quietstart-0.9.43-precompiled.hap', timeout=60) as response:
-        data = response.read(64 * 1024 * 1024)
-except HTTPError as error:
-    if error.code != 404:
-        raise
-    # The published release has one complete download per desktop platform.
-    try:
-        response = urlopen(BASE + 'quietstart-0.9.43-macOS-arm64-bundle.zip', timeout=120)
-    except HTTPError as missing:
-        if missing.code != 404:
-            raise
-        # Bootstrap the first migrated release from its original public asset.
-        response = urlopen(LEGACY + 'quietstart-0.9.43-macOS-arm64-bundle.zip', timeout=120)
-    with response:
-        bundle = response.read(256 * 1024 * 1024)
-    with zipfile.ZipFile(io.BytesIO(bundle)) as archive:
-        candidates = [i for i in archive.infolist()
-                      if i.filename.endswith('/quietstart-0.9.43.hap')]
-        if len(candidates) != 1 or candidates[0].file_size > 64 * 1024 * 1024:
-            raise ValueError('Expected one bounded root HAP in the combined bundle')
-        data = archive.read(candidates[0])
-if hashlib.sha256(data).hexdigest() != HAP_SHA:
+URL = f'https://github.com/thx853068675-dev/quietstart/releases/download/v{HAP_VERSION}/quietstart-{HAP_VERSION}.hap'
+with urlopen(URL, timeout=120) as response:
+    data = response.read(64 * 1024 * 1024 + 1)
+if len(data) > 64 * 1024 * 1024 or hashlib.sha256(data).hexdigest() != HAP_SHA:
     raise ValueError('QuietStart HAP digest mismatch')
 Path('quietstart.hap').write_bytes(data)
-print('Downloaded pinned QuietStart HAP; SHA-256 verified')
+print(f'Downloaded QuietStart {HAP_VERSION}; SHA-256 verified')

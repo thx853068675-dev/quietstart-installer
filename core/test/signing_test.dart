@@ -80,7 +80,8 @@ void main() {
     if (source == null) return;
     final bytes = File(source).readAsBytesSync();
     final package = QuietStartPackage.inspect(bytes)!;
-    expect(package.main['app']['versionCode'], 94300);
+    expect(package.main['app']['versionCode'], greaterThan(0));
+    expect(package.main['app']['versionCode'], package.manifest['versionCode']);
     expect(signedProfile(bytes), isNotEmpty);
     expect(signedProfile(package.files[workerPath]!), isNotEmpty);
     checkPayload(bytes, repack(bytes, {}));

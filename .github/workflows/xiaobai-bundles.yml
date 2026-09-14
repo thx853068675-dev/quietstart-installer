@@ -61,7 +61,7 @@ jobs:
         run: python package.py --source upstream-xiaobai --hap quietstart.hap --platform ${{ matrix.label }}
       - uses: actions/upload-artifact@v4
         with:
-          name: quietstart-0.9.43-${{ matrix.label }}-bundle
+          name: quietstart-${{ matrix.label }}-bundle
           path: release-bundles/*.zip
           if-no-files-found: error
           retention-days: 14
