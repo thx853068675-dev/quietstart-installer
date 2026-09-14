@@ -7,7 +7,8 @@ import shutil
 import subprocess
 
 UPSTREAM = '24388dd86e6c3c7cab83fc27d3e6f4f9cb1b7801'
-HAP_SHA = '242cd4c309333e7aa1b00ded05c89056671348034f293cf20b198b4493d5f03c'
+HAP_VERSION = '0.9.52'
+HAP_SHA = 'cc099cd3f066962e0f6504a4f46867bfecdbe9bbe9c7f743dcfa72d3d23acb05'
 HERE = Path(__file__).resolve().parent
 
 def replace(file, old, new):
